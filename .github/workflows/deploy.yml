@@ -1,0 +1,66 @@
+name: Deploy Home Assistant
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  set-env:
+    runs-on: ubuntu-latest
+    outputs:
+      env_name: prod
+      arch: linux/amd64
+    steps:
+      - id: set_defaults
+        run: |
+          echo "env_name=prod" >> $GITHUB_OUTPUT
+          echo "arch=linux/amd64" >> $GITHUB_OUTPUT
+
+  deploy:
+    needs: set-env
+    runs-on: ubuntu-latest
+    environment: ${{ needs.set-env.outputs.env_name }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install SSH client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openssh-client
+
+      - name: Start SSH agent
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Create project directories on server
+        run: |
+          ssh -o StrictHostKeyChecking=no \
+          root@${{ secrets.SSH_HOST }} "mkdir -p /srv/homeassistant/homeassistant /srv/homeassistant/mosquitto /srv/homeassistant/zigbee2mqtt"
+
+      - name: Copy docker-compose.prod.yml to remote server
+        run: scp -o StrictHostKeyChecking=no ./docker-compose.prod.yml root@${{ secrets.SSH_HOST }}:/srv/homeassistant/
+
+      - name: Copy Home Assistant configuration to remote server
+        run: scp -r -o StrictHostKeyChecking=no ./homeassistant/config root@${{ secrets.SSH_HOST }}:/srv/homeassistant/homeassistant/
+
+      - name: Copy Mosquitto configuration to remote server
+        run: |
+          scp -r -o StrictHostKeyChecking=no ./mosquitto/config root@${{ secrets.SSH_HOST }}:/srv/homeassistant/mosquitto/
+          scp -r -o StrictHostKeyChecking=no ./mosquitto/data root@${{ secrets.SSH_HOST }}:/srv/homeassistant/mosquitto/
+          scp -r -o StrictHostKeyChecking=no ./mosquitto/log root@${{ secrets.SSH_HOST }}:/srv/homeassistant/mosquitto/
+
+      - name: Copy Zigbee2MQTT configuration to remote server
+        run: scp -r -o StrictHostKeyChecking=no ./zigbee2mqtt/data root@${{ secrets.SSH_HOST }}:/srv/homeassistant/zigbee2mqtt/
+
+      - name: Deploy to remote server via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} << \'EOF\'
+            cd /srv/homeassistant/
+            echo "Pulling latest images..."
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --force-recreate --remove-orphans
+          EOF
