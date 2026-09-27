@@ -1,0 +1,66 @@
+- id: '1789583732540'
+  alias: Switch 3 turns wall lamp ON
+  description: ''
+  triggers:
+  - trigger: switch.turned_on
+    target:
+      entity_id: switch.0x449fdafffea4d252_l3
+    options:
+      behavior: each
+      for: 00:00:00
+  conditions:
+  - condition: light.is_off
+    target:
+      entity_id: light.0x385cfbfffe8cec15
+    options:
+      behavior: any
+      for: 00:00:00
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    target:
+      entity_id: light.0x385cfbfffe8cec15
+    data:
+      brightness_pct: 100
+  mode: single
+- id: '1789583888406'
+  alias: Switch 3 turn wall lamp OFF
+  description: ''
+  triggers:
+  - trigger: switch.turned_off
+    target:
+      entity_id: switch.0x449fdafffea4d252_l3
+    options:
+      behavior: each
+      for: 00:00:00
+  conditions:
+  - condition: light.is_on
+    target:
+      entity_id: light.0x385cfbfffe8cec15
+    options:
+      behavior: any
+      for: 00:00:00
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    target:
+      entity_id: light.0x385cfbfffe8cec15
+    data: {}
+  mode: single
+- id: '1789584311926'
+  alias: Switch 1 Trigger Wall Lamp
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - switch.0x449fdafffea4d252_l1
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    target:
+      entity_id: light.0x385cfbfffe8cec15
+    data:
+      brightness_pct: 45
+      transition: 5
+  mode: single

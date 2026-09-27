@@ -1,0 +1,50 @@
+version: 5
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://localhost:1883/
+serial:
+  port: '!secret adapter_port'
+  adapter: ember
+advanced:
+  log_level: info
+  channel: 11
+  network_key:
+    - 224
+    - 178
+    - 250
+    - 217
+    - 31
+    - 52
+    - 159
+    - 190
+    - 134
+    - 199
+    - 138
+    - 151
+    - 23
+    - 15
+    - 64
+    - 138
+  pan_id: 51975
+  ext_pan_id:
+    - 203
+    - 52
+    - 239
+    - 138
+    - 190
+    - 14
+    - 11
+    - 105
+  enable_external_js: false
+frontend:
+  enabled: true
+  port: 8080
+  host: 0.0.0.0
+homeassistant:
+  enabled: true
+onboarding: false
+devices:
+  '0x385cfbfffe8cec15':
+    friendly_name: '0x385cfbfffe8cec15'
+  '0x449fdafffea4d252':
+    friendly_name: '0x449fdafffea4d252'
