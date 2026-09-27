@@ -50,8 +50,6 @@ jobs:
       - name: Copy Mosquitto configuration to remote server
         run: |
           scp -r -o StrictHostKeyChecking=no ./mosquitto/config root@${{ secrets.SSH_HOST }}:/srv/homeassistant/mosquitto/
-          scp -r -o StrictHostKeyChecking=no ./mosquitto/data root@${{ secrets.SSH_HOST }}:/srv/homeassistant/mosquitto/
-          scp -r -o StrictHostKeyChecking=no ./mosquitto/log root@${{ secrets.SSH_HOST }}:/srv/homeassistant/mosquitto/
 
       - name: Copy Zigbee2MQTT configuration to remote server
         run: scp -r -o StrictHostKeyChecking=no ./zigbee2mqtt/data root@${{ secrets.SSH_HOST }}:/srv/homeassistant/zigbee2mqtt/
