@@ -41,6 +41,7 @@ zigbee2mqtt/data/log/
 zigbee2mqtt/data/*.db
 zigbee2mqtt/data/*.db-wal
 zigbee2mqtt/data/*.db-shm
+zigbee2mqtt/data/coordinator_backup.json
 
 # ==========================================
 # System & IDE Junk
