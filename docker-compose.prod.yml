@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     environment:
       - WG_HOST=${CI_SSH_HOST}
-      - PASSWORD=${CI_VPN_ADMIN_PASSWORD}
+      - WG_ADMIN_PASSWORD_HASH=${CI_VPN_ADMIN_PASSWORD}
       - WG_DEFAULT_ADDRESS=10.8.0.x
     volumes:
       - ./wireguard/data:/etc/wireguard
