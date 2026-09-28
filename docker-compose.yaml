@@ -30,6 +30,10 @@ services:
     network_mode: host
     environment:
       TZ: "Europe/Warsaw"
+      # --- Overrides for configuration.yaml ---
+      ZIGBEE2MQTT_CONFIG_MQTT_SERVER: "${CI_MQTT_SERVER}"
+      ZIGBEE2MQTT_CONFIG_SERIAL_PORT: "tcp://${CI_DEVICE_IP}:${CI_DEVICE_PORT}"
+      ZIGBEE2MQTT_CONFIG_SERIAL_ADAPTER: "ember"
     volumes:
       - ./zigbee2mqtt/data:/app/data
       - /run/udev:/run/udev:ro

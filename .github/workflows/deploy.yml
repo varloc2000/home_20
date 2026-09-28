@@ -39,24 +39,30 @@ jobs:
       - name: Create project directories on server
         run: |
           ssh -o StrictHostKeyChecking=no \
-          root@${{ secrets.SSH_HOST }} "mkdir -p /srv/homeassistant/homeassistant /srv/homeassistant/mosquitto /srv/homeassistant/zigbee2mqtt"
+          root@${{ vars.SSH_HOST }} "mkdir -p /srv/homeassistant/homeassistant /srv/homeassistant/mosquitto /srv/homeassistant/zigbee2mqtt"
 
       - name: Copy docker-compose.prod.yml to remote server
-        run: scp -o StrictHostKeyChecking=no ./docker-compose.prod.yml root@${{ secrets.SSH_HOST }}:/srv/homeassistant/
+        run: scp -o StrictHostKeyChecking=no ./docker-compose.prod.yml root@${{ vars.SSH_HOST }}:/srv/homeassistant/
 
       - name: Copy Home Assistant configuration to remote server
-        run: scp -r -o StrictHostKeyChecking=no ./homeassistant/config root@${{ secrets.SSH_HOST }}:/srv/homeassistant/homeassistant/
+        run: scp -r -o StrictHostKeyChecking=no ./homeassistant/config root@${{ vars.SSH_HOST }}:/srv/homeassistant/homeassistant/
 
       - name: Copy Mosquitto configuration to remote server
         run: |
-          scp -r -o StrictHostKeyChecking=no ./mosquitto/config root@${{ secrets.SSH_HOST }}:/srv/homeassistant/mosquitto/
+          scp -r -o StrictHostKeyChecking=no ./mosquitto/config root@${{ vars.SSH_HOST }}:/srv/homeassistant/mosquitto/
 
       - name: Copy Zigbee2MQTT configuration to remote server
-        run: scp -r -o StrictHostKeyChecking=no ./zigbee2mqtt/data root@${{ secrets.SSH_HOST }}:/srv/homeassistant/zigbee2mqtt/
+        run: scp -r -o StrictHostKeyChecking=no ./zigbee2mqtt/data root@${{ vars.SSH_HOST }}:/srv/homeassistant/zigbee2mqtt/
 
       - name: Deploy to remote server via SSH
+        env:
+          CI_SSH_HOST: ${{ vars.SSH_HOST }}
+          CI_VPN_ADMIN_PASSWORD: ${{ secrets.VPN_ADMIN_PASSWORD }}
+          CI_DEVICE_IP: ${{ vars.DEVICE_IP }}
+          CI_DEVICE_PORT: ${{ vars.DEVICE_PORT }}
+          CI_MQTT_SERVER: ${{ vars.MQTT_SERVER }}
         run: |
-          ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no root@${{ vars.SSH_HOST }} << 'EOF'
             cd /srv/homeassistant/
             docker logout ghcr.io || true
             echo "Pulling latest images..."
