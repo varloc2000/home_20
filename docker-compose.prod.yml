@@ -51,8 +51,6 @@ services:
       - "traefik.http.routers.zigbee2mqtt.tls.certresolver=myresolver"
       - "traefik.http.services.zigbee2mqtt.loadbalancer.server.port=8080"
       - "traefik.docker.network=traefik-network"
-    ports:
-      - "8080:8080" # Expose for internal Traefik routing, not directly to host
 
 networks:
   traefik-network:
