@@ -1,7 +1,7 @@
 version: 5
 mqtt:
   base_topic: zigbee2mqtt
-  server: mqtt://localhost:1883/
+  server: mqtt://mosquitto:1883/
 serial:
   port: '!secret adapter_port'
   adapter: ember

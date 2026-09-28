@@ -10,7 +10,6 @@ services:
     environment:
       TZ: "Europe/Warsaw"
     restart: unless-stopped
-    # network_mode: host # Removed for Traefik
     networks:
       - traefik-network
     labels:
@@ -20,28 +19,22 @@ services:
       - "traefik.http.routers.homeassistant.tls.certresolver=myresolver"
       - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
       - "traefik.docker.network=traefik-network"
-    ports:
-      - "8123:8123" # Expose for internal Traefik routing, not directly to host
 
   mosquitto:
     container_name: mosquitto
     image: eclipse-mosquitto:latest
     restart: unless-stopped
-    ports:
-      - "1883:1883"
-      - "9001:9001"
     volumes:
       - ./mosquitto/config:/mosquitto/config
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
     networks:
-      - traefik-network # Added for internal connectivity
+      - traefik-network
 
   zigbee2mqtt:
     container_name: zigbee2mqtt
     image: koenkk/zigbee2mqtt:latest
     restart: unless-stopped
-    # network_mode: host # Removed for Traefik
     environment:
       TZ: "Europe/Warsaw"
     volumes:
@@ -53,7 +46,7 @@ services:
       - traefik-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.zigbee2mqtt.rule=Host(`zigbee2mqtt.home20.run.place`)"
+      - "traefik.http.routers.zigbee2mqtt.rule=Host(`z2m.home20.run.place`)"
       - "traefik.http.routers.zigbee2mqtt.entrypoints=websecure"
       - "traefik.http.routers.zigbee2mqtt.tls.certresolver=myresolver"
       - "traefik.http.services.zigbee2mqtt.loadbalancer.server.port=8080"
