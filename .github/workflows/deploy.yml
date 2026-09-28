@@ -56,8 +56,9 @@ jobs:
 
       - name: Deploy to remote server via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} << \'EOF\'
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} << 'EOF'
             cd /srv/homeassistant/
+            docker logout ghcr.io || true
             echo "Pulling latest images..."
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --force-recreate --remove-orphans
