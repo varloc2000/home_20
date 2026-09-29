@@ -67,6 +67,16 @@ services:
     container_name: zigbee2mqtt
     image: koenkk/zigbee2mqtt:latest
     restart: unless-stopped
+    command: >
+      sh -c "
+      WG_IP=\$$(getent hosts wg-easy | awk '{print \$1}');
+      if [ -n \"\$$WG_IP\" ]; then
+        ip route add 10.8.0.0/24 via \$$WG_IP 2>/dev/null || true;
+      fi;
+      exec /sbin/tini -- docker-entrypoint.sh node index.js
+      "
+    cap_add:
+      - NET_ADMIN  # Нужно только для добавления одного маршрута при старте
     environment:
       TZ: "Europe/Warsaw"
       # --- Overrides for configuration.yaml ---
@@ -78,6 +88,7 @@ services:
       - /run/udev:/run/udev:ro
     depends_on:
       - mosquitto
+      - wg-easy
     networks:
       - traefik-network
     labels:
