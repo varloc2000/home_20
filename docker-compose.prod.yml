@@ -9,6 +9,11 @@ services:
       - WG_HOST=${CI_SSH_HOST}
       - WG_ADMIN_PASSWORD_HASH=${CI_VPN_ADMIN_PASSWORD}
       - WG_DEFAULT_ADDRESS=10.8.0.x
+      - WG_ALLOWED_IPS=0.0.0.0/0
+      - WG_PERSISTENT_KEEPALIVE=25
+      - WG_DEFAULT_DNS=1.1.1.1,8.8.8.8
+      - WG_POST_UP=iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE; iptables -A FORWARD -s 10.8.0.0/24 -j ACCEPT; iptables -A FORWARD -d 10.8.0.0/24 -j ACCEPT
+      - WG_POST_DOWN=iptables -t nat -D POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE; iptables -D FORWARD -s 10.8.0.0/24 -j ACCEPT; iptables -D FORWARD -d 10.8.0.0/24 -j ACCEPT
     volumes:
       - ./wireguard/data:/etc/wireguard
     ports:
