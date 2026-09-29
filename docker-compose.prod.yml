@@ -51,6 +51,8 @@ services:
       - "traefik.http.routers.homeassistant.tls.certresolver=myresolver"
       - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
       - "traefik.docker.network=traefik-network"
+      - "traefik.http.middlewares.homeassistant-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.homeassistant.middlewares=homeassistant-headers"
 
   mosquitto:
     container_name: mosquitto
